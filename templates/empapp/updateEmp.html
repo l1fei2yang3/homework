@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+        {% load  static %}
+		<title>update Emp</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css"
+			href="{% static '/css/style.css' %}" />
+	</head>
+
+	<body onload="startTime()">
+		<div id="wrap">
+			<div id="top_content">
+					<div id="header">
+						<div id="rightheader">
+							<p id="cg">
+								<br />
+							</p>
+						</div>
+						<div id="topheader">
+							<h1 id="title">
+								<a href="{% url 'empapp:emplist' %}">主页</a>
+							</h1>
+						</div>
+						<div id="navigation">
+						</div>
+					</div>
+				<div id="content">
+					<p id="whereami">
+					</p>
+					<h1>
+						更新员工信息:
+					</h1>
+					<form action="{% url 'empapp:updateEmplogic' %}?id={{ em.id }}&number={{ number }}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+						<table cellpadding="0" cellspacing="0" border="0"
+							class="form_table">
+							<tr>
+								<td valign="middle" align="right">
+									id:
+								</td>
+								<td valign="middle" align="left">
+                                    {{ em.id }}
+								</td>
+							</tr>
+							<tr>
+								<td valign="middle" align="right">
+									姓名:
+								</td>
+								<td valign="middle" align="left">
+									<input type="text" class="inputgri" name="name" value="{{ em.name }}"/>
+								</td>
+							</tr>
+							<tr>
+								<td valign="middle" align="right">
+									工资:
+								</td>
+								<td valign="middle" align="left">
+									<input type="text" class="inputgri" name="salary" value="{{ em.salary }}"/>
+								</td>
+							</tr>
+							<tr>
+								<td valign="middle" align="right">
+									年龄:
+								</td>
+								<td valign="middle" align="left">
+									<input type="text" class="inputgri" name="age" value="{{ em.age }}"/>
+								</td>
+							</tr>
+                            <tr>
+								<td valign="middle" align="right">
+									头像:
+								</td>
+								<td valign="middle" align="left">
+                                    {% if em.headpic %}
+									    <img src="{% static em.headpic.url %}" alt="" width="40px" id="img">
+                                    {% endif %}
+								</td>
+                                <td valign="middle" align="left">
+									<input type="file" name="headpic" onchange="changeimg()" id="change" />
+								</td>
+							</tr>
+						</table>
+						<p>
+							<input type="submit" class="button" value="修改" />
+						</p>
+					</form>
+				</div>
+			</div>
+			<div id="footer">
+				<div id="footer_bg">
+					ABC@126.com
+				</div>
+			</div>
+		</div>
+        <script>
+            function startTime()
+            {
+                var today=new Date();//定义日期对象
+                var yyyy = today.getFullYear();//通过日期对象的getFullYear()方法返回年
+                var MM = today.getMonth()+1;//通过日期对象的getMonth()方法返回年
+                var dd = today.getDate();//通过日期对象的getDate()方法返回年
+                var hh=today.getHours();//通过日期对象的getHours方法返回小时
+                var mm=today.getMinutes();//通过日期对象的getMinutes方法返回分钟
+                var ss=today.getSeconds();//通过日期对象的getSeconds方法返回秒
+                // 如果分钟或小时的值小于10，则在其值前加0，比如如果时间是下午3点20分9秒的话，则显示15：20：09
+
+
+                var day; //用于保存星期（getDay()方法得到星期编号）
+                if(today.getDay()==0)   day   =   "星期日 "
+                if(today.getDay()==1)   day   =   "星期一 "
+                if(today.getDay()==2)   day   =   "星期二 "
+                if(today.getDay()==3)   day   =   "星期三 "
+                if(today.getDay()==4)   day   =   "星期四 "
+                if(today.getDay()==5)   day   =   "星期五 "
+                if(today.getDay()==6)   day   =   "星期六 "
+                document.getElementById('cg').innerHTML=yyyy+"-"+MM +"-"+ dd +" " + hh+":"+mm+":"+ss+"   " + day;
+                setTimeout('startTime()',1000);//每一秒中重新加载startTime()方法
+            }
+            function changeimg() {
+                img=document.getElementById("img")
+                change=document.getElementById("change")
+                console.log(123)
+                if (change.files){
+                    console.log(456)
+                    img.src=window.URL.createObjectURL(change.files[0])
+                }
+
+            }
+        </script>
+	</body>
+</html>

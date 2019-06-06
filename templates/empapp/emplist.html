@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+        {% load static %}
+		<title>emplist</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="{% static '/css/style.css' %}" />
+        <script src="{% static 'js/jquery.2.2.1.min.js' %}"></script>
+        <style>
+            .a{
+                width:20px;
+                height: 20px;
+                border:1px solid #e1e2e3;
+                cursor:pointer;
+                display: inline-block;
+                text-align: center;
+                line-height: 20px;
+                }
+            .b{
+                border:0;
+                width:20px;
+                height: 20px;
+                cursor:pointer;
+                display: inline-block;
+                text-align: center;
+                line-height: 20px;
+                color: dodgerblue;
+                }
+                a{
+                    text-decoration:none;
+                }
+        </style>
+	</head>
+	<body onload="startTime()">
+		<div id="wrap">
+			<div id="top_content"> 
+				<div id="header">
+					<div id="rightheader" >
+						<p id="cg">
+							<br />
+						</p>
+					</div>
+					<div id="topheader">
+						<h1 id="title">
+							<a href="{% url 'empapp:emplist' %}">主页</a>
+						</h1>
+					</div>
+					<div id="navigation">
+					</div>
+				</div>
+				<div id="content">
+                    <div style="text-align: center;padding-top:20px;">
+                        <input type="text" name="select" onkeyup="key()" id="select" >
+                        <button onclick="query()" >查询</button>
+                    </div>
+
+					<h1>
+						欢迎来到召唤师峡谷!
+					</h1>
+                <div >
+					<table class="table">
+						<tr class="table_header">
+							<td>
+								ID
+							</td>
+							<td>
+								姓名
+							</td>
+							<td>
+								工资
+							</td>
+							<td>
+								年龄
+							</td>
+                            <td>
+								头像
+							</td>
+							<td>
+								操作
+							</td>
+						</tr>
+                        {% for u in page.object_list %}
+                            {% if forloop.counter0|divisibleby:2 %}
+                            <tr class="row1">
+                            {% else %}
+                            <tr class="row2">
+                            {% endif %}
+                                <td>{{ u.id }}</td>
+                                <td>{{ u.name }}</td>
+                                <td>{{ u.salary }}</td>
+                                <td>{{ u.age }}</td>
+                                <td>{% if u.headpic %}
+                                    <img src="{% static u.headpic.url %}" alt="" width="40px"></td>
+                                {% endif %}
+							<td>
+								<a href="{% url 'empapp:deleteEmplogic' %}?id={{ u.id }}&number={{ number }}" onclick="deteledata()">删除员工</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="{% url 'empapp:updateEmp' %}?id={{ u.id }}&number={{ number }}">修改员工</a>
+							</td>
+                        {% endfor %}
+						</tr>
+					</table>
+                </div>
+                <div style="text-align: center" id="pa">
+                    {% if page.has_previous %}
+                        <a href="{% url 'empapp:emplist' %}?number={{ page.previous_page_number}}">上一页</a>
+                    {% endif %}
+                    {% for n in page.paginator.page_range %}
+                        <a href="{% url 'empapp:emplist' %}?number={{ n }}">
+                        {% if n == page.number %}
+                            <span class="b">{{ n }}</span>
+                        {% else %}
+                            <span class="a">{{ n }}</span>
+                        {% endif %}
+                        </a>
+                    {% endfor %}
+                    
+                    {% for page in page.paginator.page_range %}
+
+                    {% endfor %}
+                    {% if page.has_next %}
+                        <a href="{% url 'empapp:emplist' %}?number={{ page.next_page_number}}">下一页</a>
+                    {% endif %}
+                </div>
+					<p>
+						<input type="button" class="button" value="添加员工" onclick="location='{% url 'empapp:addEmp' %}?number={{ number }}'"/>
+					</p>
+				</div>
+			</div>
+			<div id="footer">
+				<div id="footer_bg">
+				ABC@126.com
+				</div>
+			</div>
+		</div>
+    <script>
+        function startTime()
+            {
+                var today=new Date();//定义日期对象
+                var yyyy = today.getFullYear();//通过日期对象的getFullYear()方法返回年
+                var MM = today.getMonth()+1;//通过日期对象的getMonth()方法返回年
+                var dd = today.getDate();//通过日期对象的getDate()方法返回年
+                var hh=today.getHours();//通过日期对象的getHours方法返回小时
+                var mm=today.getMinutes();//通过日期对象的getMinutes方法返回分钟
+                var ss=today.getSeconds();//通过日期对象的getSeconds方法返回秒
+                // 如果分钟或小时的值小于10，则在其值前加0，比如如果时间是下午3点20分9秒的话，则显示15：20：09
+                MM=checkTime(MM);
+                dd=checkTime(dd);
+                mm=checkTime(mm);
+                ss=checkTime(ss);
+                var day; //用于保存星期（getDay()方法得到星期编号）
+                if(today.getDay()==0)   day   =   "星期日 "
+                if(today.getDay()==1)   day   =   "星期一 "
+                if(today.getDay()==2)   day   =   "星期二 "
+                if(today.getDay()==3)   day   =   "星期三 "
+                if(today.getDay()==4)   day   =   "星期四 "
+                if(today.getDay()==5)   day   =   "星期五 "
+                if(today.getDay()==6)   day   =   "星期六 "
+                document.getElementById('cg').innerHTML=yyyy+"-"+MM +"-"+ dd +" " + hh+":"+mm+":"+ss+"   " + day;
+                setTimeout('startTime()',1000);//每一秒中重新加载startTime()方法
+            }
+
+            function checkTime(i)
+            {
+                if (i<10){
+                    i="0" + i;
+                }
+                  return i;
+            }
+        function deteledata() {
+            var msg="您真的确定删除吗？";
+            if (confirm(msg)===true){
+                {#location.href="{% url 'empapp:deleteEmplogic' %}?id={{ u.id }}&number={{ number }}"#}
+                location.href=""
+                return true;
+            }else {
+                return false;
+            }
+        }
+
+        function key() {
+            dat=document.getElementById("select").value
+            pa=document.getElementById("pa")
+            $.ajax({
+                type: "get",
+                url: "{% url 'empapp:query' %}",
+                data: "data="+dat,
+                success:function (msg) {
+                    console.log(msg)
+                        users=msg["users"]
+                        str="<tr class=\"table_header\"><td>编号</td><td>姓名</td><td>工资</td><td>年龄</td><td>头像</td></tr>"
+                        for (i=0;i<users.length;i++){
+                            user=users[i]
+                            if (i%2==0) {
+                                str += "<tr class=\"row1\">";
+                                str += ("<td>" + user["id"] + "</td>");
+                                str += ("<td>" + user["name"] + "</td>");
+                                str += ("<td>" + user["salary"] + "</td>");
+                                str += ("<td>" + user["age"] + "</td>");
+                                if (user["headpic"]=="无") {
+                                    str+=("<td></td>");
+                                    str += "</tr>"
+                                }else{
+                                    str += ("<td><img src='/static/" + user["headpic"] + "' width='40px'></td>");
+                                    str += "</tr>"
+                                }
+                            }else{
+                                str += "<tr class=\"row2\">";
+                                str += ("<td>" + user["id"] + "</td>");
+                                str += ("<td>" + user["name"] + "</td>");
+                                str += ("<td>" + user["salary"] + "</td>");
+                                str += ("<td>" + user["age"] + "</td>");
+                                if (user["headpic"]=="无") {
+                                    str+=("<td></td>");
+                                    str += "</tr>"
+                                }else{
+                                    str += ("<td><img src='/static/" + user["headpic"] + "' width='40px'></td>");
+                                    str += "</tr>"
+                                }
+                            }
+                        }
+                        table=document.getElementsByTagName("table")[0]
+                        table.innerHTML=str
+                }
+        })
+             pa.hidden=true
+    }
+    function query() {
+            pa=document.getElementById("pa");
+
+            $.ajax(
+                {
+                    type:"get",
+                    url:"{% url 'empapp:query' %}",
+                    data:"password=123",
+                    success:function (msg) {
+                        console.log(msg)
+                        users=msg["users"]
+                        str="<tr class=\"table_header\"><td>编号</td><td>姓名</td><td>工资</td><td>年龄</td><td>头像</td></tr>"
+                        for (i=0;i<users.length;i++){
+                            user=users[i]
+                            if (i%2==0) {
+                                str += "<tr class=\"row1\">";
+                                str += ("<td>" + user["id"] + "</td>");
+                                str += ("<td>" + user["name"] + "</td>");
+                                str += ("<td>" + user["salary"] + "</td>");
+                                str += ("<td>" + user["age"] + "</td>");
+                                if (user["headpic"]=="无") {
+                                    str+=("<td></td>");
+                                    str += "</tr>"
+                                }else{
+                                    str += ("<td><img src='/static/" + user["headpic"] + "' width='40px'></td>");
+                                    str += "</tr>"
+                                }
+
+                            }else{
+                                str += "<tr class=\"row2\">";
+                                str += ("<td>" + user["id"] + "</td>");
+                                str += ("<td>" + user["name"] + "</td>");
+                                str += ("<td>" + user["salary"] + "</td>");
+                                str += ("<td>" + user["age"] + "</td>");
+                                if (user["headpic"]=="无") {
+                                    str+=("<td></td>");
+                                    str += "</tr>"
+                                }else{
+                                    str += ("<td><img src='/static/" + user["headpic"] + "' width='40px'></td>");
+                                    str += "</tr>"
+                                }
+
+                            }
+                        }
+                        table=document.getElementsByTagName("table")[0]
+                        table.innerHTML=str
+                    }
+            }
+
+        )
+         pa.hidden=true;
+    }
+    </script>
+	</body>
+</html>

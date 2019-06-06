@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{% static '/css/style.css' %}" />
+    <script src="{% static 'js/jquery.2.2.1.min.js' %}"></script>
+</head>
+<body>
+<div style="text-align: center;padding-bottom: 30px">
+    <input type="text" name="select" onkeyup="key()" id="select" >
+    <button onclick="query()" >查询</button>
+</div>
+    <div id="top_content">
+        <table class="table"></table>
+    </div>
+<script>
+    function key() {
+        dat=document.getElementById("select").value
+        $.ajax({
+            type: "get",
+            url: "{% url 'empapp:query' %}",
+            data: "data="+dat,
+            success:function (msg) {
+                console.log(msg)
+                    users=msg["users"]
+                    str="<tr class=\"table_header\"><td>编号</td><td>姓名</td><td>工资</td><td>年龄</td><td>头像</td></tr>"
+                    for (i=0;i<users.length;i++){
+                        user=users[i]
+                        if (i%2==0) {
+                            str += "<tr class=\"row1\">";
+                            str += ("<td>" + user["id"] + "</td>");
+                            str += ("<td>" + user["name"] + "</td>");
+                            str += ("<td>" + user["salary"] + "</td>");
+                            str += ("<td>" + user["age"] + "</td>");
+                            if (user["headpic"]=="无") {
+                                str+=("<td></td>");
+                                str += "</tr>"
+                            }else{
+                                str += ("<td><img src='/static/" + user["headpic"] + "' width='40px'></td>");
+                                str += "</tr>"
+                            }
+                        }else{
+                            str += "<tr class=\"row2\">";
+                            str += ("<td>" + user["id"] + "</td>");
+                            str += ("<td>" + user["name"] + "</td>");
+                            str += ("<td>" + user["salary"] + "</td>");
+                            str += ("<td>" + user["age"] + "</td>");
+                            if (user["headpic"]=="无") {
+                                str+=("<td></td>");
+                                str += "</tr>"
+                            }else{
+                                str += ("<td><img src='/static/" + user["headpic"] + "' width='40px'></td>");
+                                str += "</tr>"
+                            }
+                        }
+                    }
+                    table=document.getElementsByTagName("table")[0]
+                    table.innerHTML=str
+            }
+        })
+    }
+    function query() {
+        $.ajax(
+            {
+                type:"get",
+                url:"{% url 'empapp:query' %}",
+                data:"password=123",
+                success:function (msg) {
+                    console.log(msg)
+                    users=msg["users"]
+                    str="<tr class=\"table_header\"><td>编号</td><td>姓名</td><td>工资</td><td>年龄</td><td>头像</td></tr>"
+                    for (i=0;i<users.length;i++){
+                        user=users[i]
+                        if (i%2==0) {
+                            str += "<tr class=\"row1\">";
+                            str += ("<td>" + user["id"] + "</td>");
+                            str += ("<td>" + user["name"] + "</td>");
+                            str += ("<td>" + user["salary"] + "</td>");
+                            str += ("<td>" + user["age"] + "</td>");
+                            if (user["headpic"]=="无") {
+                                str+=("<td></td>");
+                                str += "</tr>"
+                            }else{
+                                str += ("<td><img src='/static/" + user["headpic"] + "' width='40px'></td>");
+                                str += "</tr>"
+                            }
+
+                        }else{
+                            str += "<tr class=\"row2\">";
+                            str += ("<td>" + user["id"] + "</td>");
+                            str += ("<td>" + user["name"] + "</td>");
+                            str += ("<td>" + user["salary"] + "</td>");
+                            str += ("<td>" + user["age"] + "</td>");
+                            if (user["headpic"]=="无") {
+                                str+=("<td></td>");
+                                str += "</tr>"
+                            }else{
+                                str += ("<td><img src='/static/" + user["headpic"] + "' width='40px'></td>");
+                                str += "</tr>"
+                            }
+
+                        }
+                    }
+                    table=document.getElementsByTagName("table")[0]
+                    table.innerHTML=str
+                }
+            }
+        )
+    }
+</script>
+</body>
+</html>

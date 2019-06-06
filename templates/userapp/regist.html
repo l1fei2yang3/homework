@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+        {% load static %}
+		<title>regist</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="{%  static '/css/style.css' %}" />
+	</head>
+	<body>
+		<div id="wrap">
+			<div id="top_content">
+					<div id="header">
+						<div id="rightheader">
+							<p>
+								2009/11/20
+								<br />
+							</p>
+						</div>
+						<div id="topheader">
+							<h1 id="title">
+								<a href="#">main</a>
+							</h1>
+						</div>
+						<div id="navigation">
+						</div>
+					</div>
+				<div id="content">
+					<p id="whereami">
+					</p>
+					<h1>
+						注册
+					</h1>
+					<form action="{% url 'userapp:registlogic' %}" method="post">
+                        {% csrf_token %}
+						<table cellpadding="0" cellspacing="0" border="0"
+							class="form_table">
+							<tr>
+								<td valign="middle" align="right">
+									用户名:
+								</td>
+								<td valign="middle" align="left">
+									<input type="text" class="inputgri" name="username" onblur="checkName()" id="uname" />
+								</td>
+                                <td>
+                                    <span id="msg">请输入账号</span>
+                                    <img id="lode" src="{% static 'img/lode.gif' %}" alt="" width="16px" style="visibility: hidden">
+                                </td>
+							</tr>
+							<tr>
+								<td valign="middle" align="right">
+									真实姓名:
+								</td>
+								<td valign="middle" align="left">
+									<input type="text" class="inputgri" name="name" onblur="n()" id="nmm" />
+								</td>
+                                <td>
+                                    <span id="nm">请输入姓名</span>
+                                </td>
+							</tr>
+							<tr>
+								<td valign="middle" align="right">
+									密码:
+								</td>
+								<td valign="middle" align="left">
+									<input type="password" class="inputgri" name="pwd" onblur="checkPwd()" id="cpw"/>
+								</td>
+                                <td>
+                                    <span id="pw">请输入密码</span>
+                                    <img src="" alt="" id="impw" width="16px">
+                                </td>
+							</tr>
+                            <tr>
+								<td valign="middle" align="right">
+									确认密码:
+								</td>
+								<td valign="middle" align="left">
+									<input type="password" class="inputgri" name="pwd1" onblur="checkPww()" id="cpd"/>
+								</td>
+                                <td>
+                                    <span id="pww">请再次输入密码</span>
+                                </td>
+							</tr>
+							<tr>
+								<td valign="middle" align="right">
+									性别:
+								</td>
+								<td valign="middle" align="left">
+									男
+									<input type="radio" class="inputgri" name="sex" value="m" checked="checked"/>
+									女
+									<input type="radio" class="inputgri" name="sex" value="f"/>
+								</td>
+							</tr>
+							
+							<tr>
+								<td valign="middle" align="right" >
+									验证码:
+									<img id="num" src="{% url 'userapp:getcaptcha' %}" width="80px" />
+									<a href="javascript:void(0)" onclick="document.getElementById('num').src = '{% url 'userapp:getcaptcha' %}?'+(new Date()).getTime()">换一张</a>
+								</td>
+								<td valign="middle" align="left">
+									<input type="text" class="inputgri" name="number" onblur="checkImg()" id="cig"/>
+								</td>
+                                <td>
+                                    <span id="cim">请输入验证码</span>
+                                    <img src="" alt="" id="capth" width="16px">
+                                </td>
+							</tr>
+						</table>
+						<p>
+							<input type="submit" class="button" value="注册 &raquo;"/>
+						</p>
+					</form>
+                    <p>
+                        <a href="{% url 'userapp:login' %}">已有账号？点我登录吧</a>
+						</p>
+				</div>
+			</div>
+			<div id="footer">
+				<div id="footer_bg">
+				ABC@126.com
+				</div>
+			</div>
+		</div>
+    <script>
+        function n() {
+            nmm=document.getElementById("nmm").value
+            nm=document.getElementById("nm")
+            nm.hidden=true
+            if (nmm){
+                nm.hidden=false
+                nm.innerHTML="姓名合格"
+            }else {
+                nm.hidden=false
+                nm.innerHTML="姓名为空"
+            }
+        }
+        function checkImg() {
+            cig=document.getElementById("cig").value
+            cim=document.getElementById("cim")
+            capth=document.getElementById("capth")
+            cim.hidden=true
+            capth.src="{% static 'img/lode.gif' %}";
+            url="{% url 'userapp:checkImg' %}?cig="+cig
+            var xhr;
+            if (window.ActiveXObject){
+                xhr=new ActiveXObject("Microsoft.XMLHTTP")
+            }else if(window.XMLHttpRequest){
+                xhr=new XMLHttpRequest()
+            }
+            xhr.open("get",url,true ) //true:异步请求
+            xhr.send() //
+            xhr.onreadystatechange=function() {//准备状态发生改变时，会自动回调该函数
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    result = xhr.responseText
+                    console.log("result=" + result)
+
+                        if (result=="验证码正确"){
+                            cim.hidden=false
+                            capth.src=""
+                            cim.style.color="black"
+                            cim.innerHTML=result
+
+                        } else if(result=="验证码错误"){
+                            cim.hidden=false
+                            capth.src=""
+                            cim.style.color="red"
+                            cim.innerHTML=result
+
+                        }
+                    }
+
+                }
+        }
+        function checkPwd() {
+            cpw=document.getElementById("cpw").value
+            cpd=document.getElementById("cpd").value
+            pw=document.getElementById("pw")
+            impw=document.getElementById("impw")
+            pw.hidden=true
+            impw.src="{% static 'img/lode.gif' %}";
+            if (cpw) {
+                pw.hidden=false
+                pw.innerHTML="密码合格"
+                impw.src=""
+            }else if(cpw!=cpd){
+                pw.hidden=false
+                pw.style.color="red"
+                pw.innerHTML="两次密码不一致"
+                impw.src=""
+            }else{
+                pw.hidden=false
+                impw.src=""
+                pw.style.color="red"
+                pw.innerHTML="密码不能为空"
+            }
+
+        }
+        function checkPww(){
+            cpw=document.getElementById("cpw").value
+            cpd=document.getElementById("cpd").value
+            pww=document.getElementById("pww")
+            if (cpw==cpd){
+                pww.innerHTML="密码验证通过"
+            }else{
+                pww.style.color="red"
+                pww.innerHTML="两次密码不一致"
+            }
+        }
+        function checkName() {
+            //获取用户名
+            username= document.getElementById("uname").value
+            {#alert(username)#}
+            url="{% url 'userapp:checkname' %}?username="+username
+            {#location.href=url//传统请求#}
+            {#使用ajax来发送请求:运用在前端页面的技术#}
+            lode=document.getElementById("lode")
+            msg.hidden=true
+            lode.style.visibility="visible"
+            //1.构造核心对象
+            var xhr;
+            if (window.ActiveXObject){
+                xhr=new ActiveXObject("Microsoft.XMLHTTP")
+            }else if(window.XMLHttpRequest){
+                xhr=new XMLHttpRequest()
+            }
+            xhr.open("get",url,true ) //true:异步请求
+            xhr.send() //send发送了请求给服务器后，服务器会接收请求并处理请求（花时间）
+                        //该行代码执行完后，后面的代码不会等待服务器返回结果才执行
+
+            //如果发送给的是ajax请求时，需要在前端页面中手动获取响应的结果
+            xhr.onreadystatechange=function() {//准备状态发生改变时，会自动回调该函数
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    result = xhr.responseText
+                    console.log("result=" + result)
+
+                    if (result == "用户名已经存在") {
+                        lode.src = "{% static 'img/error.jpg' %}"
+                    } else if (result == "用户名合法") {
+                       lode.src = "{% static 'img/right.jpg' %}"
+                    }else if (result == "用户名不能为空") {
+                       lode.src = "{% static 'img/error.jpg' %}"
+                    }
+                }
+            }
+        lode.src = "{% static 'img/lode.gif' %}"
+        }
+    </script>
+	</body>
+</html>
